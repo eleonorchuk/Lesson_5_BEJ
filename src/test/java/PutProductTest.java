@@ -1,6 +1,6 @@
 import com.github.javafaker.Faker;
 import dto.Product;
-import lombok.SneakyThrows;
+
 import okhttp3.ResponseBody;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -12,11 +12,11 @@ import service.ProductService;
 import utils.RetrofitUtils;
 
 import java.io.IOException;
-import java.util.Locale;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CreateProductTest {
+public class PutProductTest {
     static ProductService productService;
     Product product;
     Faker faker = new Faker();
@@ -34,12 +34,8 @@ public class CreateProductTest {
         product = new Product()
                 .withTitle(faker.food().ingredient())
                 .withCategoryTitle("Food")
-                .withPrice((int) (Math.random() * 10000));
-    }
+                .withPrice(5555);
 
-    @Test
-    //@SneakyThrows
-    void createProductInFoodCategoryTest() {
         Response<Product> response = null;
         try {
             response = productService.createProduct(product)
@@ -50,7 +46,28 @@ public class CreateProductTest {
         id = response.body().getId();
         assertThat(response.isSuccessful(), CoreMatchers.is(true));
     }
-    //@SneakyThrows
+
+    @Test
+    void updateProductInFoodCategoryTest() {
+        Response<Product> response = null;
+
+        Product productUpdate = new Product()
+                .withId(id)
+                .withTitle(product.getTitle())
+                .withCategoryTitle(product.getCategoryTitle())
+                .withPrice(9999);
+        try {
+            response = productService.updateProduct(productUpdate)
+                    .execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertThat(response.isSuccessful(), CoreMatchers.is(true));
+        assertThat(id == response.body().getId(), CoreMatchers.is(true));
+        assertThat(response.body().getPrice() == 9999, CoreMatchers.is(true));
+    }
+
     @AfterEach
     void tearDown() {
         Response<ResponseBody> response = null;

@@ -1,6 +1,6 @@
 import com.github.javafaker.Faker;
 import dto.Product;
-import lombok.SneakyThrows;
+
 import okhttp3.ResponseBody;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -12,11 +12,11 @@ import service.ProductService;
 import utils.RetrofitUtils;
 
 import java.io.IOException;
-import java.util.Locale;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CreateProductTest {
+public class DeleteProductTest {
     static ProductService productService;
     Product product;
     Faker faker = new Faker();
@@ -34,12 +34,8 @@ public class CreateProductTest {
         product = new Product()
                 .withTitle(faker.food().ingredient())
                 .withCategoryTitle("Food")
-                .withPrice((int) (Math.random() * 10000));
-    }
+                .withPrice(5555);
 
-    @Test
-    //@SneakyThrows
-    void createProductInFoodCategoryTest() {
         Response<Product> response = null;
         try {
             response = productService.createProduct(product)
@@ -50,9 +46,9 @@ public class CreateProductTest {
         id = response.body().getId();
         assertThat(response.isSuccessful(), CoreMatchers.is(true));
     }
-    //@SneakyThrows
-    @AfterEach
-    void tearDown() {
+
+    @Test
+    void DeleteCategoryTest() {
         Response<ResponseBody> response = null;
         try {
             response = productService.deleteProduct(id).execute();

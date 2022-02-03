@@ -5,8 +5,10 @@ import lombok.experimental.UtilityClass;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
 @UtilityClass
 public class ConfigUtils {
     Properties prop = new Properties();
@@ -19,9 +21,13 @@ public class ConfigUtils {
             e.printStackTrace();
         }
     }
-    @SneakyThrows
+    //@SneakyThrows
     public String getBaseUrl() {
-        prop.load(configFile);
+        try {
+            prop.load(configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return prop.getProperty("url");
     }
 }
