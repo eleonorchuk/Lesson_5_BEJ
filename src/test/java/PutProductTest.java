@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
+import ru.geekbrains.java4.lesson6.db.model.Products;
 import service.ProductService;
 import utils.RetrofitUtils;
 
@@ -15,6 +16,8 @@ import java.io.IOException;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PutProductTest {
     static ProductService productService;
@@ -49,33 +52,33 @@ public class PutProductTest {
 
     @Test
     void updateProductInFoodCategoryTest() {
-        Response<Product> response = null;
-
-        Product productUpdate = new Product()
-                .withId(id)
-                .withTitle(product.getTitle())
-                .withCategoryTitle(product.getCategoryTitle())
-                .withPrice(9999);
+        Products productUpdate = new Products();
+        productUpdate.setId((long) id);
+        productUpdate.setTitle(product.getTitle());
+        productUpdate.setCategory_id(1L);
+        productUpdate.setPrice(9999);
+        //DB
         try {
-            response = productService.updateProduct(productUpdate)
-                    .execute();
+            Main.updateProduct(productUpdate);
+            Products productNew = Main.getProductById((long) id);
+            assertThat(productNew.getId() == id, CoreMatchers.is(true));
+            assertThat(productNew.getPrice() == 9999, CoreMatchers.is(true));
         } catch (IOException e) {
+            assertTrue(false);
             e.printStackTrace();
         }
-
-        assertThat(response.isSuccessful(), CoreMatchers.is(true));
-        assertThat(id == response.body().getId(), CoreMatchers.is(true));
-        assertThat(response.body().getPrice() == 9999, CoreMatchers.is(true));
     }
 
     @AfterEach
     void tearDown() {
-        Response<ResponseBody> response = null;
+        //DB
         try {
-            response = productService.deleteProduct(id).execute();
+            Main.deleteProductById((long) id);
+            Products product = Main.getProductById((long) id);
+            assertNull(product);
         } catch (IOException e) {
+            assertTrue(false);
             e.printStackTrace();
         }
-        assertThat(response.isSuccessful(), CoreMatchers.is(true));
     }
 }

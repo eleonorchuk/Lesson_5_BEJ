@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
+import ru.geekbrains.java4.lesson6.db.model.Products;
 import service.ProductService;
 import utils.RetrofitUtils;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteProductTest {
     static ProductService productService;
@@ -56,5 +58,14 @@ public class DeleteProductTest {
             e.printStackTrace();
         }
         assertThat(response.isSuccessful(), CoreMatchers.is(true));
+        //DB
+        try {
+            Products product = Main.getProductById((long) id);
+            assertNull(product);
+        } catch (IOException e) {
+            assertTrue(false);
+            e.printStackTrace();
+        }
+
     }
 }
